@@ -20,7 +20,7 @@ FCGIInterface::~FCGIInterface() {
 }
 
 bool FCGIInterface::response() {
-    log("Request recieved", LOG_INFO, OUT_BOTH);
+    log("Request recieved", LOG_INFO, OUT_FILE);
     openHtml();
     out << "Welcome to Custom printer manager" << BR;
     out << "<a href=\"?info=1\">About</a>" << BR;
