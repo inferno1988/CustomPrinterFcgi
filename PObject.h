@@ -21,8 +21,8 @@ using namespace boost::property_tree;
 
 class PObject {
 public:
-    static const int OUT_FILE = 5;
-    static const int OUT_SYSLOG = 6;
+    static const int OUT_FILE = 0;
+    static const int OUT_SYSLOG = 1;
     static const int OUT_BOTH = OUT_FILE | OUT_SYSLOG;
     void log(string message, int _pri, int outLevel);
     PObject();
