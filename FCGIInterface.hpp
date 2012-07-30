@@ -8,10 +8,11 @@
 #ifndef FCGIINTERFACE_HPP
 #define	FCGIINTERFACE_HPP
 
-#include "PObject.h"
+#include <stdlib.h>
+#include <syslog.h>
 #include <fastcgi++/request.hpp>
 #include <fastcgi++/manager.hpp>
-#include <syslog.h>
+#include "PObject.h"
 
 class FCGIInterface: public Fastcgipp::Request<char>, PObject {
 public:

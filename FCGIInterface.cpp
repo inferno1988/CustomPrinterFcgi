@@ -5,11 +5,9 @@
  * Created on 24 липня 2012, 15:47
  */
 
-#include <stdlib.h>
 #include "FCGIInterface.hpp"
 
 FCGIInterface::FCGIInterface() {
-
 }
 
 FCGIInterface::FCGIInterface(const FCGIInterface& orig) {
@@ -19,6 +17,7 @@ FCGIInterface::~FCGIInterface() {
 }
 
 bool FCGIInterface::response() {
+    log("Recieved request: " + environment().requestUri, LOG_INFO);
     openHtml();
     out << "Welcome to Custom printer manager" << BR;
     out << "<a href=\"?info=1\">About</a>" << BR;

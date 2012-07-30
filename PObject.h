@@ -16,14 +16,16 @@
 #ifndef POBJECT_H
 #define	POBJECT_H
 
+#define OUT_FILE        1
+#define OUT_SYSLOG      2
+#define OUT_BOTH        3
+
 using namespace std;
 using namespace boost::property_tree;
 
 class PObject {
 public:
-    static const int OUT_FILE = 1;
-    static const int OUT_SYSLOG = 2;
-    static const int OUT_BOTH = OUT_FILE | OUT_SYSLOG;
+
     void log(string message, int _pri);
     void log(string message, int _pri, int outMode);
     PObject();
@@ -31,6 +33,7 @@ public:
     virtual ~PObject();
     int getCurrentDebugLevel();
     string getCurrentDebugLevelText();
+    string getDebugLevelText(int debugLevel);
     void setCurrentDebugLevel(int currentDebugLevel);
     int getCurrentOutMode();
     string getCurrentOutModeText();

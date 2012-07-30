@@ -22,9 +22,14 @@ PObject::~PObject() {
 }
 
 void PObject::log(std::string message, int _pri) {
-    openlog("PrinterDriver", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_DAEMON);
-    printMessageToSelectedOutput(message, _pri, getCurrentOutMode());
-    closelog();
+    if (isDebuggingEnabled()) {
+        if (_pri <= getCurrentDebugLevel()) {
+            string prefix = getDebugLevelText(_pri);
+            openlog("PrinterDriver", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_DAEMON);
+            printMessageToSelectedOutput(prefix + message, _pri, getCurrentOutMode());
+            closelog();
+        }
+    }
 }
 
 void PObject::log(std::string message, int _pri, int outMode) {
@@ -147,4 +152,16 @@ string PObject::getCurrentDebugLevelText() {
     if (currentDebugLevel == LOG_CRIT)
         return "Critical";
     return "Wrong debug level";     
+}
+
+string PObject::getDebugLevelText(int debugLevel) {
+    if (debugLevel == LOG_INFO)
+        return "[INFO] ";
+    if (debugLevel == LOG_WARNING)
+        return "[WARNING] ";
+    if (debugLevel == LOG_ERR)
+        return "[ERROR] ";
+    if (debugLevel == LOG_CRIT)
+        return "[CRITICAL] ";
+    return "[Unknown] ";   
 }
