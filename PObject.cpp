@@ -21,9 +21,15 @@ PObject::PObject(const PObject& orig) {
 PObject::~PObject() {
 }
 
-void PObject::log(std::string message, int _pri, int outLevel) {
+void PObject::log(std::string message, int _pri) {
     openlog("PrinterDriver", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_DAEMON);
-    printMessageToSelectedOutput(message, _pri, outLevel);
+    printMessageToSelectedOutput(message, _pri, getCurrentOutMode());
+    closelog();
+}
+
+void PObject::log(std::string message, int _pri, int outMode) {
+    openlog("PrinterDriver", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_DAEMON);
+    printMessageToSelectedOutput(message, _pri, outMode);
     closelog();
 }
 
@@ -70,10 +76,10 @@ void PObject::initXmlConfig() {
         currentOutMode = propertyTree.get<int>("debug.out");
         debuggingEnabled = propertyTree.get<bool>("debug.enabled");
     } catch (xml_parser_error e) {
-        log(string(e.what()), LOG_ERR, OUT_SYSLOG);
+        log(string(e.what()), LOG_CRIT, OUT_SYSLOG);
         exit(EXIT_FAILURE);
     } catch (ptree_bad_data e) {
-        log(string(e.what()), LOG_ERR, OUT_SYSLOG);
+        log(string(e.what()), LOG_CRIT, OUT_SYSLOG);
         exit(EXIT_FAILURE);
     }
 
@@ -88,7 +94,7 @@ void PObject::saveXmlConfig() {
         propertyTree.put("debug.filename", "/tmp/printer.log");
         write_xml("printer.xml", propertyTree);
     } catch (xml_parser_error e) {
-        log(string(e.what()), LOG_ERR, OUT_SYSLOG);
+        log(string(e.what()), LOG_CRIT, OUT_SYSLOG);
         exit(EXIT_FAILURE);
     }
 }
@@ -118,4 +124,27 @@ bool PObject::isDebuggingEnabled() {
 void PObject::setDebuggingEnabled(bool isDebuggingEnabled) {
     this->debuggingEnabled = isDebuggingEnabled;
     saveXmlConfig();
+}
+
+string PObject::getCurrentOutModeText() {
+    int currentOutMode = getCurrentOutMode();
+    if (currentOutMode == OUT_FILE)
+        return "File";
+    if (currentOutMode == OUT_SYSLOG)
+        return "Syslog";
+    if (currentOutMode == OUT_BOTH)
+        return "Both";
+}
+
+string PObject::getCurrentDebugLevelText() {
+    int currentDebugLevel = getCurrentDebugLevel();
+    if (currentDebugLevel == LOG_INFO)
+        return "Informational";
+    if (currentDebugLevel == LOG_WARNING)
+        return "Warning";
+    if (currentDebugLevel == LOG_ERR)
+        return "Error";
+    if (currentDebugLevel == LOG_CRIT)
+        return "Critical";
+    return "Wrong debug level";     
 }

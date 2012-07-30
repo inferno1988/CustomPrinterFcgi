@@ -21,16 +21,19 @@ using namespace boost::property_tree;
 
 class PObject {
 public:
-    static const int OUT_FILE = 0;
-    static const int OUT_SYSLOG = 1;
+    static const int OUT_FILE = 1;
+    static const int OUT_SYSLOG = 2;
     static const int OUT_BOTH = OUT_FILE | OUT_SYSLOG;
-    void log(string message, int _pri, int outLevel);
+    void log(string message, int _pri);
+    void log(string message, int _pri, int outMode);
     PObject();
     PObject(const PObject& orig);
     virtual ~PObject();
     int getCurrentDebugLevel();
+    string getCurrentDebugLevelText();
     void setCurrentDebugLevel(int currentDebugLevel);
     int getCurrentOutMode();
+    string getCurrentOutModeText();
     void setCurrentOutMode(int currentOutMode);
     bool isDebuggingEnabled();
     void setDebuggingEnabled(bool isDebuggingEnabled);

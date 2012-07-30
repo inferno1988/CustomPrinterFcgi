@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include "FCGIInterface.hpp"
 
-
 FCGIInterface::FCGIInterface() {
 
 }
@@ -31,6 +30,15 @@ bool FCGIInterface::response() {
             string debugKey = environment().findGet("debugState");
             setDebuggingEnabled((bool)atoi(debugKey.c_str()));
         }
+        if (environment().checkForGet("debugOutputMode")) {
+            string debugOutMode = environment().findGet("debugOutputMode");
+            setCurrentOutMode(atoi(debugOutMode.c_str()));
+        }
+        if (environment().checkForGet("debugLevel")) {
+            string debugLevel = environment().findGet("debugLevel");
+            setCurrentDebugLevel(atoi(debugLevel.c_str()));
+        }
+        
         showDebugManagePage();
     }
     closeHtml();
@@ -45,13 +53,13 @@ void FCGIInterface::showInfoPage() {
 
 void FCGIInterface::showDebugManagePage() {
     if (isDebuggingEnabled())
-       out << "Current debug state: Enabled" << BR
+        out << "Current debug state: Enabled" << BR
     else
         out << "Current debug state: Disabled" << BR;
 
     out << "Current log file is: " << getLogFilename() << BR;
-    out << "Current debug level is: " << getCurrentDebugLevel() << BR;
-    out << "Current output mode is: " << getCurrentOutMode() << BR;
+    out << "Current debug level is: " << getCurrentDebugLevelText() << BR;
+    out << "Current output mode is: " << getCurrentOutModeText() << BR;
 
     if (!isDebuggingEnabled())
         out << "<a href=\"?debug=1&debugState=1\">Enable debugging</a>" << BR
@@ -59,14 +67,14 @@ void FCGIInterface::showDebugManagePage() {
         out << "<a href=\"?debug=1&debugState=0\">Disable debugging</a>" << BR;
 
     out << "Change debug output mode: ";
-    out << "<a href=\"?debug=1&debugOutputMode=1\">To file only</a> | ";
-    out << "<a href=\"?debug=1&debugOutputMode=2\">To syslog only</a> | ";
-    out << "<a href=\"?debug=1&debugOutputMode=3\">Both</a>" << BR;
+    out << "<a href=\"?debug=1&debugOutputMode=" << OUT_FILE << "\">To file only</a> | ";
+    out << "<a href=\"?debug=1&debugOutputMode=" << OUT_SYSLOG << "\">To syslog only</a> | ";
+    out << "<a href=\"?debug=1&debugOutputMode=" << OUT_BOTH << "\">Both</a>" << BR;
     out << "Change debug level: ";
-    out << "<a href=\"?debug=1&debugLevel=1\">Informational</a> | ";
-    out << "<a href=\"?debug=1&debugLevel=2\">Warning</a> | ";
-    out << "<a href=\"?debug=1&debugLevel=3\">Error</a> | ";
-    out << "<a href=\"?debug=1&debugLevel=4\">Critical</a>" << BR;
+    out << "<a href=\"?debug=1&debugLevel=" << LOG_INFO << "\">Informational</a> | ";
+    out << "<a href=\"?debug=1&debugLevel=" << LOG_WARNING << "\">Warning</a> | ";
+    out << "<a href=\"?debug=1&debugLevel=" << LOG_ERR << "\">Error</a> | ";
+    out << "<a href=\"?debug=1&debugLevel=" << LOG_CRIT << "\">Critical</a>" << BR;
 }
 
 void FCGIInterface::openHtml() {
