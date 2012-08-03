@@ -4,6 +4,9 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>FCGIManager.hpp</itemPath>
+      <itemPath>PObject.h</itemPath>
+      <itemPath>PrinterWrapper.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -12,10 +15,9 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>FCGIInterface.cpp</itemPath>
-      <itemPath>FCGIInterface.hpp</itemPath>
+      <itemPath>FCGIManager.cpp</itemPath>
       <itemPath>PObject.cpp</itemPath>
-      <itemPath>PObject.h</itemPath>
+      <itemPath>PrinterWrapper.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"

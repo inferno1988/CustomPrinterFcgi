@@ -5,7 +5,8 @@
  * Created on 24 липня 2012, 15:47
  */
 
-#include "FCGIInterface.hpp"
+#include "FCGIManager.hpp"
+#include "PrinterWrapper.h"
 
 FCGIInterface::FCGIInterface() {
 }
@@ -17,11 +18,25 @@ FCGIInterface::~FCGIInterface() {
 }
 
 bool FCGIInterface::response() {
-    log("Recieved request: " + environment().requestUri, LOG_INFO);
+    using namespace Fastcgipp;
+    log("Received request: " + environment().requestUri, LOG_INFO);
     openHtml();
     out << "Welcome to Custom printer manager" << BR;
     out << "<a href=\"?info=1\">About</a>" << BR;
-    out << "<a href=\"?debug=1\">Manage debugging</a>" << BR;
+    out << "<a href=\"?debug=1\">Debug settings</a>" << BR;
+
+
+
+    if (environment().checkForPost("toprint")) {
+        if (environment().posts.size()) {
+            if (environment().posts.size()) {
+                Http::Post<char> post = environment().findPost("toprint");
+                log("Printing bill brint", LOG_INFO);
+                printBill(post.value);
+                log("Printing bill brint finished", LOG_INFO);
+            }
+        }
+    }
     if (environment().checkForGet("info"))
         showInfoPage();
     if (environment().checkForGet("debug")) {
@@ -37,11 +52,18 @@ bool FCGIInterface::response() {
             string debugLevel = environment().findGet("debugLevel");
             setCurrentDebugLevel(atoi(debugLevel.c_str()));
         }
-        
+
         showDebugManagePage();
     }
     closeHtml();
     return true;
+}
+
+void FCGIInterface::printBill(string billText) {
+    PrinterWrapper * printerWrapper = new PrinterWrapper();
+    printerWrapper->initPort();
+    printerWrapper->writeData((char *) billText.c_str());
+    printerWrapper->closePort();
 }
 
 void FCGIInterface::showInfoPage() {
@@ -78,7 +100,7 @@ void FCGIInterface::showDebugManagePage() {
 
 void FCGIInterface::openHtml() {
     out << "Content-Type: text/html; charset=utf-8\r\n\r\n";
-    out << "<html><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>";
+    out << " <!DOCTYPE html>\n<html>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>";
     out << "<title>Custom printer manager</title>\n";
     out << "<body>";
 }

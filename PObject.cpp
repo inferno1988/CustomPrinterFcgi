@@ -13,6 +13,7 @@ PObject::PObject() {
     this->currentDebugLevel = getCurrentDebugLevel();
     this->currentOutMode = getCurrentOutMode();
     this->debuggingEnabled = isDebuggingEnabled();
+    this->deviceFileDescriptor = getDeviceFileDescriptor();
 }
 
 PObject::PObject(const PObject& orig) {
@@ -34,7 +35,8 @@ void PObject::log(std::string message, int _pri) {
 
 void PObject::log(std::string message, int _pri, int outMode) {
     openlog("PrinterDriver", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_DAEMON);
-    printMessageToSelectedOutput(message, _pri, outMode);
+    string prefix = getDebugLevelText(_pri);
+    printMessageToSelectedOutput(prefix + message, _pri, outMode);
     closelog();
 }
 
@@ -80,6 +82,7 @@ void PObject::initXmlConfig() {
         currentDebugLevel = propertyTree.get<int>("debug.level");
         currentOutMode = propertyTree.get<int>("debug.out");
         debuggingEnabled = propertyTree.get<bool>("debug.enabled");
+        deviceFileDescriptor = propertyTree.get<string>("device");
     } catch (xml_parser_error e) {
         log(string(e.what()), LOG_CRIT, OUT_SYSLOG);
         exit(EXIT_FAILURE);
@@ -96,6 +99,7 @@ void PObject::saveXmlConfig() {
         propertyTree.put("debug.level", currentDebugLevel);
         propertyTree.put("debug.out", currentOutMode);
         propertyTree.put("debug.enabled", debuggingEnabled);
+        propertyTree.put("device", deviceFileDescriptor);
         propertyTree.put("debug.filename", "/tmp/printer.log");
         write_xml("printer.xml", propertyTree);
     } catch (xml_parser_error e) {
@@ -129,6 +133,15 @@ bool PObject::isDebuggingEnabled() {
 void PObject::setDebuggingEnabled(bool isDebuggingEnabled) {
     this->debuggingEnabled = isDebuggingEnabled;
     saveXmlConfig();
+}
+
+void PObject::setDeviceFileDescriptor(string deviceFileDescriptor) {
+    this->deviceFileDescriptor = deviceFileDescriptor;
+    saveXmlConfig();
+}
+
+string PObject::getDeviceFileDescriptor() const {
+    return deviceFileDescriptor;
 }
 
 string PObject::getCurrentOutModeText() {

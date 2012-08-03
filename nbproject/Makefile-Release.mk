@@ -34,7 +34,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/FCGIInterface.o \
+	${OBJECTDIR}/PrinterWrapper.o \
+	${OBJECTDIR}/FCGIManager.o \
 	${OBJECTDIR}/PObject.o
 
 
@@ -62,10 +63,15 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/printerdriver: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/printerdriver ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/FCGIInterface.o: FCGIInterface.cpp 
+${OBJECTDIR}/PrinterWrapper.o: PrinterWrapper.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/FCGIInterface.o FCGIInterface.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/PrinterWrapper.o PrinterWrapper.cpp
+
+${OBJECTDIR}/FCGIManager.o: FCGIManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/FCGIManager.o FCGIManager.cpp
 
 ${OBJECTDIR}/PObject.o: PObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}
