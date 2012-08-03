@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>FCGIManager.hpp</itemPath>
       <itemPath>PObject.h</itemPath>
+      <itemPath>PaperStatus.h</itemPath>
       <itemPath>PrinterWrapper.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -17,6 +18,7 @@
                    projectFiles="true">
       <itemPath>FCGIManager.cpp</itemPath>
       <itemPath>PObject.cpp</itemPath>
+      <itemPath>PaperStatus.cpp</itemPath>
       <itemPath>PrinterWrapper.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -64,6 +66,11 @@
         <asmTool>
           <developmentMode>5</developmentMode>
         </asmTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerOptionItem>`pkg-config --libs fastcgi++`</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
     </conf>
   </confs>

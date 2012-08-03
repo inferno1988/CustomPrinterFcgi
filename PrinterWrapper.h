@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include "PObject.h"
+#include "PaperStatus.h"
 
 using namespace std;
 

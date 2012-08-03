@@ -19,13 +19,34 @@ FCGIInterface::~FCGIInterface() {
 
 bool FCGIInterface::response() {
     using namespace Fastcgipp;
+
     log("Received request: " + environment().requestUri, LOG_INFO);
+
+    if (environment().checkForGet("command") && environment().checkForGet("callback")) {
+        if (environment().findGet("command") == "paper_status") {
+            printHtmlHeader();
+            PaperStatus paperStatus = parsePaperStatus();
+            out << environment().findGet("callback") << "({ \"paperEnd\" : " << 
+                    paperStatus.IsPaperEnd() << ", \"nearPaperEnd\" : " << 
+                    paperStatus.IsNearPaperEnd() << " })" << endl;
+        }
+        return true;
+    }
+
+    if (environment().checkForGet("command")) {
+        if (environment().findGet("command") == "paper_status") {
+            printHtmlHeader();
+            PaperStatus paperStatus = parsePaperStatus();
+            out << "{ \"paperEnd\" : " << paperStatus.IsPaperEnd() << ", \"nearPaperEnd\" : " << 
+                    paperStatus.IsNearPaperEnd() << " }" << endl;
+        }
+        return true;
+    }
+
     openHtml();
     out << "Welcome to Custom printer manager" << BR;
     out << "<a href=\"?info=1\">About</a>" << BR;
     out << "<a href=\"?debug=1\">Debug settings</a>" << BR;
-
-
 
     if (environment().checkForPost("toprint")) {
         if (environment().posts.size()) {
@@ -52,7 +73,6 @@ bool FCGIInterface::response() {
             string debugLevel = environment().findGet("debugLevel");
             setCurrentDebugLevel(atoi(debugLevel.c_str()));
         }
-
         showDebugManagePage();
     }
     closeHtml();
@@ -64,12 +84,45 @@ void FCGIInterface::printBill(string billText) {
     printerWrapper->initPort();
     printerWrapper->writeData((char *) billText.c_str());
     printerWrapper->closePort();
+    delete printerWrapper;
+}
+
+PaperStatus FCGIInterface::parsePaperStatus() {
+    PaperStatus paperStatus;
+    PrinterWrapper * printerWrapper = new PrinterWrapper();
+    printerWrapper->initPort();
+    unsigned int printerStatus = printerWrapper->getPaperStatus();
+    printerWrapper->closePort();
+    delete printerWrapper;
+    
+    switch (printerStatus) {
+        case 0:
+            paperStatus.SetNearPaperEnd(false);
+            paperStatus.SetPaperEnd(false);
+            break;
+        case 3:
+            paperStatus.SetNearPaperEnd(true);
+            paperStatus.SetPaperEnd(false);
+            break;
+        case 12:
+            paperStatus.SetNearPaperEnd(false);
+            paperStatus.SetPaperEnd(true);
+            break;
+        case 15:
+            paperStatus.SetNearPaperEnd(true);
+            paperStatus.SetPaperEnd(true);
+            break;
+        default:
+            paperStatus.SetNearPaperEnd(true);
+            paperStatus.SetPaperEnd(true);
+    }
+    return paperStatus;
 }
 
 void FCGIInterface::showInfoPage() {
     out << "Custom printer daemon v0.3-rc2 fcgi" << BR;
     out << "Palamarchuk Maxim (gofl@meta.ua) ©2011" << BR;
-    out << " ҉" << BR;
+    out << "¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤" << BR;
 }
 
 void FCGIInterface::showDebugManagePage() {
@@ -98,15 +151,19 @@ void FCGIInterface::showDebugManagePage() {
     out << "<a href=\"?debug=1&debugLevel=" << LOG_CRIT << "\">Critical</a>" << BR;
 }
 
-void FCGIInterface::openHtml() {
+void FCGIInterface::printHtmlHeader() {
     out << "Content-Type: text/html; charset=utf-8\r\n\r\n";
+}
+
+void FCGIInterface::openHtml() {
+    printHtmlHeader();
     out << " <!DOCTYPE html>\n<html>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>";
     out << "<title>Custom printer manager</title>\n";
-    out << "<body>";
+    out << "<body>\n";
 }
 
 void FCGIInterface::closeHtml() {
-    out << "</body></html>\n";
+    out << "</body>\n</html>\n";
     out.flush();
 }
 

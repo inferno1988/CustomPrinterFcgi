@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<debug>
+    <level>6</level>
+    <out>1</out>
+    <enabled>true</enabled>
+    <filename>/tmp/printer.log</filename>
+</debug>
+<device>/dev/usb/lp0</device>

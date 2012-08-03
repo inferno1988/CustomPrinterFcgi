@@ -109,11 +109,11 @@ void PrinterWrapper::writeData(char * buf) {
 unsigned int PrinterWrapper::getPaperStatus() {
     unsigned char printerStatus = 0x00;
     log("Sending INIT command to printer", LOG_INFO);
-    write(fd, INIT, strlen(INIT));
+    write(fd, INIT, sizeof(INIT));
     log("Sending GET_PRINTER_STATUS command to printer", LOG_INFO);
-    write(fd, GET_PRINTER_STATUS, strlen(GET_PRINTER_STATUS));
+    write(fd, GET_PRINTER_STATUS, sizeof(GET_PRINTER_STATUS));
     read(fd, &printerStatus, 1);
-
+    
     return (unsigned int) printerStatus;
 }
 

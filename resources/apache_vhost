@@ -1,0 +1,20 @@
+#NameVirtualHost *:80
+<VirtualHost 127.0.0.1:80>
+  ServerAdmin mail@localhost 
+  DocumentRoot /var/www
+  ServerName «fcgi.local»
+ 
+  <Directory /var/www/cgi-bin>
+    Options Indexes FollowSymLinks MultiViews ExecCGI
+    AllowOverride all
+        Order Allow,Deny
+	Allow from all
+        Deny from none
+  </Directory>
+ 
+  <Files printerdriver.fcgi>
+     SetHandler fastcgi-script
+  </Files>
+ 
+  FastCgiServer /var/www/cgi-bin/printerdriver.fcgi
+</VirtualHost>

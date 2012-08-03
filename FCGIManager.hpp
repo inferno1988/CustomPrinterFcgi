@@ -15,6 +15,7 @@
 #include <fastcgi++/fcgistream.hpp>
 #include <fstream>
 #include "PObject.h"
+#include "PaperStatus.h"
 
 class FCGIInterface:
     public Fastcgipp:: Request<char>,
@@ -34,7 +35,9 @@ class FCGIInterface:
         void showDebugManagePage();
         void openHtml();
         void closeHtml();
+        void printHtmlHeader();
         void printBill(string billText);
+        PaperStatus parsePaperStatus();
 #define BR "<br>\n";
 };
 #endif   /* FCGIINTERFACE_HPP */
